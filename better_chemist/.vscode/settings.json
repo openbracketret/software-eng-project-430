@@ -1,0 +1,4 @@
+{
+    "python.pythonPath": "/home/lukeg/software-engineering-project/venv/bin/python",
+    "python.languageServer": "Pylance"
+}
