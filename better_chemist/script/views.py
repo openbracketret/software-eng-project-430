@@ -1,3 +1,11 @@
 from django.shortcuts import render
 
-# Create your views here.
+from tools.viewsets import ActionAPIView
+
+
+class ExternalScriptViewset(ActionAPIView):
+    """
+    The viewset class to handle requests from outside sources for adding scripts
+    """
+
+    
