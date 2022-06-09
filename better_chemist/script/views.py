@@ -56,6 +56,26 @@ class ScriptViewset(ActionAPIView):
                 "message": "Please provide an ID number to search by"
             }
 
-        serializer = CustomerBaseSerializer(data=customer)
+        serializer = CustomerBaseSerializer(customer)
 
         return serializer.data
+
+    def post_add_customer(self, request, params, *args, **kwargs):
+
+        data = {
+            "id_number": params.get("id_number", None),
+            "contact_number": params.get("contact_number", None),
+            "first_name": params.get("first_name", None),
+            "surname": params.get("surname", None)
+        }
+
+        serializer = CustomerBaseSerializer(data=data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return "Customer added"
+        
+        return {
+            "success": False,
+            "payload": serializer.errors
+        }
