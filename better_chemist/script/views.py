@@ -1,6 +1,8 @@
+from argparse import Action
 from django.shortcuts import render
 
-from script.serializers import ScriptBaseSerializer
+from script.serializers import ScriptBaseSerializer, CustomerBaseSerializer
+from script.models import Customer, Script, ScriptRedeems
 
 from tools.viewsets import ActionAPIView
 
@@ -32,3 +34,28 @@ class ExternalScriptViewset(ActionAPIView):
             }
         }
 
+
+class ScriptViewset(ActionAPIView):
+    """
+    The viewset used to manage everything internal to do with scripts
+    """
+
+    def get_search_customer(self, request, params, *args, **kwargs):
+
+        if params.get("id_number", None):
+            try:
+                customer = Customer.objects.get(id_number=params['id_number'])
+            except Customer.DoesNotExist:
+                return {
+                    "success": False,
+                    "message": "No customer with that ID number exists"
+                }
+        else:
+            return {
+                "success": False,
+                "message": "Please provide an ID number to search by"
+            }
+
+        serializer = CustomerBaseSerializer(data=customer)
+
+        return serializer.data
