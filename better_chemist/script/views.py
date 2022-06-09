@@ -1,5 +1,6 @@
 from argparse import Action
 from django.shortcuts import render
+from yaml import serialize
 
 from script.serializers import ScriptBaseSerializer, CustomerBaseSerializer
 from script.models import Customer, Script, ScriptRedeems
@@ -125,3 +126,44 @@ class ScriptViewset(ActionAPIView):
 
         return "Script redeemed"
         
+    def post_check_for_existing_script(self, request, params, *args, **kwargs):
+
+        if not params.get("id_number", None):
+            return {
+                "success": False,
+                "message": "Please provide an id number"
+            }
+
+        scripts = Script.objects.filter(customer_id_number=params['id_number'])
+
+        if not scripts.exists():
+            return {
+                "success": False,
+                "message": "No scripts with that customer id number"
+            }
+
+        script = scripts.latest('id')
+
+        serializer = ScriptBaseSerializer(script)
+        return serializer.data
+
+
+    def post_add_new_script(self, request, params, *args, **kwargs):
+
+        data = {
+            "file": params.get("file", None),
+            "created_by_id": request.user.id,
+            "max_redeems": params.get("max_redeems", None),
+            "customer_id_number": params.get("customer_id_number", None)
+        }
+
+        serializer = ScriptBaseSerializer(data=data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return serializer.data
+
+        return {
+            "success": False,
+            "payload": serializer.errors
+        } 
