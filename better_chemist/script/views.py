@@ -15,10 +15,12 @@ class ExternalScriptViewset(ActionAPIView):
 
     def post_upload_script(self, request, params, *args, **kwargs):
 
+        print(request.user.id)
         data = {
-            'file': params['file'],
-            'created_by_id': request.user.id,
-            'max_redeems': params['max_redeems'],
+            'file': params.get('file', None),
+            'created_by': request.user.id,
+            'max_redeems': params.get('max_redeems', None),
+            'customer_id_number': params.get('customer_id_number', None)
         }
 
         serializer = ScriptBaseSerializer(data=data)
@@ -67,7 +69,8 @@ class ScriptViewset(ActionAPIView):
             "id_number": params.get("id_number", None),
             "contact_number": params.get("contact_number", None),
             "first_name": params.get("first_name", None),
-            "surname": params.get("surname", None)
+            "surname": params.get("surname", None),
+            "address": params.get("address", None)
         }
 
         serializer = CustomerBaseSerializer(data=data)
@@ -152,7 +155,7 @@ class ScriptViewset(ActionAPIView):
 
         data = {
             "file": params.get("file", None),
-            "created_by_id": request.user.id,
+            "created_by": request.user.id,
             "max_redeems": params.get("max_redeems", None),
             "customer_id_number": params.get("customer_id_number", None)
         }
