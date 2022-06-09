@@ -14,6 +14,7 @@ class Script(models.Model):
     file = models.FileField(upload_to='script_files/')
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     max_redeems = models.IntegerField()
+    customer_id_number = models.CharField(max_length=13)
 
 class Customer(models.Model):
     """

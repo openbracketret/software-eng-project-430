@@ -79,3 +79,49 @@ class ScriptViewset(ActionAPIView):
             "success": False,
             "payload": serializer.errors
         }
+
+    def post_redeem_script(self, request, params, *args, **kwargs):
+
+        if not params.get("customer_id", None):
+            return {
+                "success": False,
+                "message": "Please provide customer id"
+            }
+
+        if not params.get("script_id", None):
+            return {
+                "success": False,
+                "message": "Please provide script id"
+            }
+
+        try:
+            script = Script.objects.get(id=params['script_id'])
+        except Script.DoesNotExist:
+            return {
+                "success": False,
+                "message": "No script with that ID exists"
+            }
+
+        try:
+            customer = Customer.objects.get(id=params['customer_id'])
+        except Customer.DoesNotExist:
+            return {
+                "success": False,
+                "message": "No customer with that ID exists"
+            }
+
+        redeemed_count = ScriptRedeems.objects.filter(script=script, customer=customer).count()
+
+        if redeemed_count >= script.max_redeems:
+            return {
+                "success": False,
+                "message": "The selected script has been redeemed the max amount of times already"
+            }
+
+        ScriptRedeems.objects.create(
+            script=script,
+            customer=customer
+        )
+
+        return "Script redeemed"
+        
