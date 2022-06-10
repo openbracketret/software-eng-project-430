@@ -4,7 +4,7 @@ $(function() {
         window.location.href = "/login.html";
     }
 
-    let baseApiURL = "http://localhost:8000/api/v1/"
+    let baseApiURL = "http://api.luke-soft.me:8000/api/v1/"
 
 
     // Index Page
@@ -72,13 +72,52 @@ $(function() {
     });
 
     $("#redeem-submit").click(function() {
-        console.log("redeem-test");
+        $.ajax({
+            type: 'post',
+            url: baseApiURL + "script_actions/redeem_script/",
+            data: {
+                customer_id_number: $("#redeem-customer-id-no").val(),
+                script_id: $("#redeem-script-id").val()
+            },
+            headers: {
+                "Authorization": "Token " + localStorage.getItem("token")
+            },
+            success: function(response) {
+                if (response.success == true) {
+                    $("#index-modal-title").html("<h2>Script Redeemed</h2>");
+                    $("#index-modal").modal("toggle");
+                } else {
+                    $("#index-modal-title").html("<h2>An error occurred</h2>");
+                    $("#index-modal").modal("toggle");
+                    console.log(response);
+                }
+            }
+        });
     });
 
 
     $("#redeem-search").click(function() {
 
-        
+        $.ajax({
+            type: 'post',
+            url: baseApiURL + "script_actions/check_for_existing_script/",
+            data: {
+                id_number: $("#redeem-customer-id-no").val()
+            },
+            headers: {
+                "Authorization": "Token " + localStorage.getItem("token")
+            },
+            success: function(response) {
+                if (response.success == true) {
+                    $("#index-modal-title").html("<h2>Script Found</h2>");
+                    $("#index-modal").modal("toggle");
+                    $("#redeem-script-id").val(response.payload.id);
+                } else {
+                    $("#index-modal-title").html("<h2>An error occurred</h2>");
+                    $("#index-modal").modal("toggle");
+                }
+            }
+        });
 
     });
 
@@ -94,7 +133,7 @@ $(function() {
 
         $.ajax({
             type: "POST",
-            url: "http://localhost:8000/auth-token/",
+            url: "http://api.luke-soft.me:8000/auth-token/",
             data: data,
             success: function (response) {
                 console.log("success");
@@ -115,6 +154,15 @@ $(function() {
                 }
             }
         });
+
+    });
+
+    // External User Register
+
+    $("#external-submit").click(function() {
+
+        $("#index-modal-title").html("<h2>External User Registered</h2>");
+        $("#index-modal").modal("toggle");
 
     });
 

@@ -65,6 +65,15 @@ class ScriptViewset(ActionAPIView):
 
     def post_add_customer(self, request, params, *args, **kwargs):
 
+        try:
+            Customer.objects.get(id_number=params.get("id_number", None))
+            return {
+                "success": False,
+                "payload": "Customer with that ID number already exists"
+            }
+        except Customer.DoesNotExist:
+            pass
+
         data = {
             "id_number": params.get("id_number", None),
             "contact_number": params.get("contact_number", None),
@@ -86,7 +95,7 @@ class ScriptViewset(ActionAPIView):
 
     def post_redeem_script(self, request, params, *args, **kwargs):
 
-        if not params.get("customer_id", None):
+        if not params.get("customer_id_number", None):
             return {
                 "success": False,
                 "message": "Please provide customer id"
@@ -107,7 +116,7 @@ class ScriptViewset(ActionAPIView):
             }
 
         try:
-            customer = Customer.objects.get(id=params['customer_id'])
+            customer = Customer.objects.get(id_number=params['customer_id_number'])
         except Customer.DoesNotExist:
             return {
                 "success": False,

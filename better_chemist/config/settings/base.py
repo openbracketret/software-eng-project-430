@@ -290,7 +290,7 @@ REST_FRAMEWORK = {
 # CORS_URLS_REGEX = r"^/api/.*$"
 # CORS_ALLOWED_ORIGINS = ['*']
 CORS_ALLOW_ALL_ORIGINS = True
-
+ALLOWED_HOSTS = ['api.luke-soft.me']
 # By Default swagger ui is available only to admin user(s). You can change permission classes to change that
 # See more configuration options at https://drf-spectacular.readthedocs.io/en/latest/settings.html#settings
 SPECTACULAR_SETTINGS = {
